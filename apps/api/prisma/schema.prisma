@@ -10,12 +10,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
+model User {
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  password    String
+  verified    Boolean   @default(false)
+  firstname   String?
+  lastname    String?
+  phone       String?
+  companyName String?
+  products    Product[]
+  invoices    Invoice[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("users")
+}
+
+model Client {
+  id        Int       @id @default(autoincrement())
   name      String
-  code      String   @unique
+  email     String
+  address   String?
+  phone     String?
+  invoices  Invoice[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("clients")
+}
+
+model Product {
+  id             Int              @id @default(autoincrement())
+  name           String
+  description    String
+  price          Int
+  picture        String
+  userId         Int
+  user           User             @relation(fields: [userId], references: [id])
+  invoiceDetails InvoiceDetails[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@map("products")
+}
+
+model Invoice {
+  id                Int                @id @default(autoincrement())
+  code              String             @unique
+  dueDate           DateTime
+  status            InvoiceStatus      @default(PENDING)
+  clientId          Int
+  client            Client             @relation(fields: [clientId], references: [id])
+  userId            Int
+  user              User               @relation(fields: [userId], references: [id])
+  invoiceDetails    InvoiceDetails[]
+  recurringInvoices RecurringInvoice[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@map("invoices")
+}
+
+model InvoiceDetails {
+  id        Int      @id @default(autoincrement())
+  invoiceId Int
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Int
+  subTotal  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("samples") // if you want to use snake_case format
+  @@map("invoice_details")
+}
+
+model RecurringInvoice {
+  id               Int              @id @default(autoincrement())
+  invoiceId        Int
+  invoice          Invoice          @relation(fields: [invoiceId], references: [id])
+  paymentFrequency PaymentFrequency
+  startDate        DateTime
+  endDate          DateTime
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@map("recurring_invoices")
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  DUE_DATE
+}
+
+enum PaymentFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
 }
