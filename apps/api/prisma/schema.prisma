@@ -10,11 +10,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Sample {
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("samples") // if you want to use snake_case format
+}
+
 model User {
   id          Int       @id @default(autoincrement())
   email       String    @unique
   password    String
-  verified    Boolean   @default(false)
+  isVerified  Boolean   @default(false)
   firstname   String?
   lastname    String?
   phone       String?
@@ -28,14 +38,15 @@ model User {
 }
 
 model Client {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String
-  address   String?
-  phone     String?
-  invoices  Invoice[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id                Int       @id @default(autoincrement())
+  name              String
+  email             String
+  address           String?
+  phone             String?
+  paymentPreference String?
+  invoices          Invoice[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   @@map("clients")
 }
@@ -60,6 +71,8 @@ model Invoice {
   code              String             @unique
   dueDate           DateTime
   status            InvoiceStatus      @default(PENDING)
+  payment           String
+  emailSent         DateTime
   clientId          Int
   client            Client             @relation(fields: [clientId], references: [id])
   userId            Int
