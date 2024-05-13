@@ -40,7 +40,7 @@ export class ClientController {
         }
       });
 
-      return res.status(200).json({ success: true, results: newClient });
+      return res.status(201).json({ success: true, results: newClient });
     } catch (error) {
       return next(error);
     }

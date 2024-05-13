@@ -10,6 +10,7 @@ import cors from 'cors';
 import { PORT } from './config';
 import { AuthRouter } from './routers/auth.router';
 import { ClientRouter } from './routers/client.router';
+import { ProductRouter } from './routers/product.router';
 
 export default class App {
   private app: Express;
@@ -53,6 +54,9 @@ export default class App {
   private routes(): void {
     const authRouter = new AuthRouter();
     const clientRouter = new ClientRouter();
+    const productRouter = new ProductRouter();
+
+    this.app.use(express.static('public'));
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
@@ -60,6 +64,7 @@ export default class App {
 
     this.app.use('/api/auth', authRouter.getRouter());
     this.app.use('/api/clients', clientRouter.getRouter());
+    this.app.use('/api/products', productRouter.getRouter());
   }
 
   public start(): void {
