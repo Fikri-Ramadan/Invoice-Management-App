@@ -9,6 +9,7 @@ import express, {
 import cors from 'cors';
 import { PORT } from './config';
 import { AuthRouter } from './routers/auth.router';
+import { ClientRouter } from './routers/client.router';
 
 export default class App {
   private app: Express;
@@ -51,12 +52,14 @@ export default class App {
 
   private routes(): void {
     const authRouter = new AuthRouter();
+    const clientRouter = new ClientRouter();
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
 
     this.app.use('/api/auth', authRouter.getRouter());
+    this.app.use('/api/clients', clientRouter.getRouter());
   }
 
   public start(): void {

@@ -27,6 +27,14 @@ export default function SignIn() {
         { email, password },
         {
           onSuccess: (data) => {
+            if (data.success == false) {
+              toast({
+                variant: 'destructive',
+                title: 'Sign In Failed !',
+                description: data?.message,
+              });
+              return
+            } 
             toast({
               variant: 'success',
               title: 'Sign In Successfully !',

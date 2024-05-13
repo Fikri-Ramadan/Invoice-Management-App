@@ -10,16 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
-  name      String
-  code      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("samples") // if you want to use snake_case format
-}
-
 model User {
   id          Int       @id @default(autoincrement())
   email       String    @unique
@@ -29,6 +19,7 @@ model User {
   lastname    String?
   phone       String?
   companyName String?
+  clients     Client[]
   products    Product[]
   invoices    Invoice[]
   createdAt   DateTime  @default(now())
@@ -44,6 +35,8 @@ model Client {
   address           String?
   phone             String?
   paymentPreference String?
+  userId            Int
+  user              User      @relation(fields: [userId], references: [id])
   invoices          Invoice[]
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt

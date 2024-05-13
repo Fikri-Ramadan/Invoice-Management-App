@@ -1,5 +1,6 @@
 'use client';
 
+import LoadingComp from '@/components/LoadingComp';
 import useEmailVerified from '@/hooks/useEmailVerified';
 import { BadgeAlert, BadgeCheck } from 'lucide-react';
 import Link from 'next/link';
@@ -13,7 +14,7 @@ export default function VerifyEmailPage() {
     token: token as string,
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <LoadingComp />;
 
   if (isError)
     return (
