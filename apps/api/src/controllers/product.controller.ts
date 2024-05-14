@@ -7,6 +7,9 @@ export class ProductController {
       const products = await prisma.product.findMany({
         where: {
           userId: req?.dataUser?.id
+        },
+        orderBy: {
+          createdAt: 'desc'
         }
       });
 
@@ -36,7 +39,6 @@ export class ProductController {
     try {
       const { name, description, price } = req.body;
       const file: any = req.file;
-      console.log(req.body);
 
       if (!file) {
         return res.status(400).json({
@@ -45,7 +47,7 @@ export class ProductController {
         });
       }
 
-      const imageUrl = process.env.BASE_URL + '/images/' + file?.filename;
+      const imageUrl = file?.filename;
 
       const newProduct = await prisma.product.create({
         data: {

@@ -10,27 +10,27 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import useMyClients from '@/hooks/useMyClients';
+import useMyProducts from '@/hooks/useMyProducts';
 import { ChevronLeft, ChevronRight, SquarePen } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-export default function ClientTable() {
-  const { data, isLoading, isError } = useMyClients();
+export default function ProductTable() {
+  const { data, isLoading, isError } = useMyProducts();
 
-  const [clients, setClients] = useState<any>([]);
+  const [products, setproducts] = useState<any>([]);
 
   useEffect(() => {
     if (!isLoading) {
-      setClients(() => {
-        return data?.results?.map((client: any) => {
+      setproducts(() => {
+        return data?.results?.map((product: any) => {
           return {
-            id: client?.id,
-            name: client?.name,
-            email: client?.email,
-            paymentPreference: client?.paymentPreference,
-            phone: client?.phone,
-            address: client?.address,
+            id: product?.id,
+            image: product?.picture,
+            name: product?.name,
+            price: product?.price,
+            description: product?.description,
           };
         });
       });
@@ -45,25 +45,36 @@ export default function ClientTable() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="">picture</TableHead>
             <TableHead className="">name</TableHead>
-            <TableHead className="">email</TableHead>
-            <TableHead className="">payment</TableHead>
-            <TableHead className="">phone</TableHead>
-            <TableHead className="">address</TableHead>
+            <TableHead className="">price</TableHead>
+            <TableHead className="">description</TableHead>
             <TableHead className="text-center">action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {clients?.map((client: any) => (
-            <TableRow key={client.name}>
-              <TableCell className="font-medium">{client.name}</TableCell>
-              <TableCell className="">{client.email}</TableCell>
-              <TableCell>{client.paymentPreference}</TableCell>
-              <TableCell className="">{client.phone}</TableCell>
-              <TableCell className="">{client.address}</TableCell>
+          {products?.map((product: any) => (
+            <TableRow key={product.name}>
+              <TableCell className="w-[100px]">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${product.image}`}
+                  alt="product picture"
+                  width={60}
+                  height={60}
+                />
+              </TableCell>
+              <TableCell className="font-medium">{product.name}</TableCell>
+              <TableCell className="">Rp. {product.price}</TableCell>
+              <TableCell>
+                {product.description?.length < 20 ? (
+                  <span>{product.description}</span>
+                ) : (
+                  <span>{product.description.substring(0, 20)}...</span>
+                )}
+              </TableCell>
               <TableCell className="">
                 <div className="flex items-center justify-center cursor-pointer">
-                  <Link href={`/dashboard/clients/${client.id}`}>
+                  <Link href={`/dashboard/products/${product.id}`}>
                     <SquarePen className="w-4 h-4 text-yellow-500" />
                   </Link>
                 </div>

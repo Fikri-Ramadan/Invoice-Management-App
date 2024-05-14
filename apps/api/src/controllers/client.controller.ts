@@ -7,6 +7,9 @@ export class ClientController {
       const clients = await prisma.client.findMany({
         where: {
           userId: req?.dataUser?.id
+        },
+        orderBy: {
+          createdAt: 'desc'
         }
       });
       return res.status(200).json({ success: true, results: clients });
