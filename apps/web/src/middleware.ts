@@ -6,6 +6,7 @@ const protectedRoutes = [
   '/dashboard/clients',
   '/dashboard/products',
   '/dashboard/invoices',
+  '/dashboard/invoices/create',
   '/dashboard/profile',
 ];
 
@@ -20,7 +21,6 @@ export default async function middleware(req: NextRequest) {
     const { token } = await JSON.parse(session);
 
     if (!token) return NextResponse.redirect(absoluteURL.toString() + 'auth/singin');
-    console.log(token)
 
     try {
       const res = await fetch(

@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 import { cn } from '@/lib/utils';
 import QueryProvider from '@/providers/QueryProvider';
 import { Toaster } from '@/components/ui/toaster';
+import ApplicationWrapper from '@/providers/ApplicationWrapper';
+import { CookiesProvider } from 'next-client-cookies/server';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,12 +27,14 @@ export default function RootLayout({
           inter.className,
         )}
       >
-        <QueryProvider>
-          {/* <Header /> */}
-          {children}
-          <Toaster />
-          {/* <Footer /> */}
-        </QueryProvider>
+        <CookiesProvider>
+          <QueryProvider>
+            <ApplicationWrapper>
+              {children}
+              <Toaster />
+            </ApplicationWrapper>
+          </QueryProvider>
+        </CookiesProvider>
       </body>
     </html>
   );

@@ -61,7 +61,7 @@ model Product {
 
 model Invoice {
   id                Int                @id @default(autoincrement())
-  code              String             @unique
+  invoiceNumber     String             @unique
   dueDate           DateTime
   status            InvoiceStatus      @default(PENDING)
   payment           String
