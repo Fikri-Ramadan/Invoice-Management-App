@@ -15,10 +15,11 @@ import { SquarePen } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import DeleteClientDialog from './DeleteClientDialog';
 
 export default function ClientTable({ setTotal }: { setTotal: any }) {
   const searchParams = useSearchParams();
-  const { data, isLoading, isError } = useMyClients({
+  const { data, isLoading, isError, refetch } = useMyClients({
     page: searchParams.get('page') || '1',
     search: searchParams.get('search') || '',
   });
@@ -67,12 +68,13 @@ export default function ClientTable({ setTotal }: { setTotal: any }) {
               <TableCell>{client.paymentPreference}</TableCell>
               <TableCell className="">{client.phone}</TableCell>
               <TableCell className="">{client.address}</TableCell>
-              <TableCell className="">
+              <TableCell className="flex items-center justify-center gap-2">
                 <div className="flex items-center justify-center cursor-pointer">
                   <Link href={`/dashboard/clients/${client.id}`}>
                     <SquarePen className="w-4 h-4 text-yellow-500" />
                   </Link>
                 </div>
+                <DeleteClientDialog id={client.id} name={client.name} refetch={refetch} />
               </TableCell>
             </TableRow>
           ))}

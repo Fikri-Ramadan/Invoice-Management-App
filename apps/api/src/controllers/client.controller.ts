@@ -15,6 +15,7 @@ export class ClientController {
       const clients = await prisma.client.findMany({
         where: {
           userId: req?.dataUser?.id,
+          isDeleted: false,
           OR: [
             { name: { contains: String(req.query.search) } },
             { email: { contains: String(req.query.search) } },
@@ -30,6 +31,7 @@ export class ClientController {
       const totalClient = await prisma.client.count({
         where: {
           userId: req?.dataUser?.id,
+          isDeleted: false,
           OR: [
             { name: { contains: String(req.query.search) } },
             { email: { contains: String(req.query.search) } },
@@ -95,6 +97,32 @@ export class ClientController {
           name, email, address, phone, paymentPreference
         }
       });
+      return res.status(200).json({ success: true, results: updatedClient });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async softDeleteClient(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      const client = await prisma.client.findUnique({
+        where: { id: Number(id) }
+      });
+      if (!client) return res.status(404).json({ success: false, message: 'Client not found' });
+
+      const isMyClient = client?.userId == req?.dataUser?.id;
+      if (!isMyClient) return res.status(403).json({ success: false, message: 'Not your client' });
+
+      const updatedClient = await prisma.client.update({
+        where: {
+          id: client?.id
+        }, data: {
+          isDeleted: true,
+        }
+      });
+
       return res.status(200).json({ success: true, results: updatedClient });
     } catch (error) {
       return next(error);

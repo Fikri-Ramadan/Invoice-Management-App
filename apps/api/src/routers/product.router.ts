@@ -18,6 +18,7 @@ export class ProductRouter {
     this.router.get('/:id', verifyToken, this.productController.getProductById);
     this.router.post('/', verifyToken, uploader("IMG", "/images").single('file'), this.productController.createProduct);
     this.router.put('/:id', verifyToken, this.productController.updateProduct);
+    this.router.delete('/:id', verifyToken, this.productController.softDeleteProduct);
   }
 
   getRouter() {

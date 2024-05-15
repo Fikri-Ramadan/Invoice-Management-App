@@ -17,6 +17,7 @@ export class ClientRouter {
     this.router.get('/:id', verifyToken, this.clientController.getClientById);
     this.router.post('/', verifyToken, this.clientController.createClient);
     this.router.put('/:id', verifyToken, this.clientController.updateClient);
+    this.router.delete('/:id', verifyToken, this.clientController.softDeleteClient);
   }
 
   getRouter() {

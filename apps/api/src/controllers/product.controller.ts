@@ -15,6 +15,7 @@ export class ProductController {
       const products = await prisma.product.findMany({
         where: {
           userId: req?.dataUser?.id,
+          isDeleted: false,
           name: { contains: String(req.query.search) },
         },
         orderBy: {
@@ -27,10 +28,11 @@ export class ProductController {
       const totalProduct = await prisma.product.count({
         where: {
           userId: req?.dataUser?.id,
+          isDeleted: false,
           name: { contains: String(req.query.search) },
         },
       });
-      return res.status(200).json({ success: true, results: {totalProduct, products} });
+      return res.status(200).json({ success: true, results: { totalProduct, products } });
     } catch (error) {
       return next(error);
     }
@@ -104,6 +106,32 @@ export class ProductController {
       });
 
       return res.status(200).json({ success: true, resutls: updatedProduct });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async softDeleteProduct(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      const product = await prisma.product.findUnique({
+        where: { id: Number(id) }
+      });
+      if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+
+      const isMyProduct = product?.userId == req?.dataUser?.id;
+      if (!isMyProduct) return res.status(403).json({ success: false, message: 'Not your product' });
+
+      const updatedProduct = await prisma.product.update({
+        where: {
+          id: product?.id
+        }, data: {
+          isDeleted: true,
+        }
+      });
+
+      return res.status(200).json({ success: true, results: updatedProduct });
     } catch (error) {
       return next(error);
     }

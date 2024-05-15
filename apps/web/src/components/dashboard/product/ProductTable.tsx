@@ -16,10 +16,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import DeleteProductDialog from './DeleteProductDialog';
 
 export default function ProductTable({ setTotal }: { setTotal: any }) {
   const searchParams = useSearchParams();
-  const { data, isLoading, isError } = useMyProducts({
+  const { data, isLoading, isError, refetch } = useMyProducts({
     page: searchParams.get('page') || '1',
     search: searchParams.get('search') || '',
   });
@@ -78,12 +79,17 @@ export default function ProductTable({ setTotal }: { setTotal: any }) {
                   <span>{product.description.substring(0, 20)}...</span>
                 )}
               </TableCell>
-              <TableCell className="">
+              <TableCell className="h-[100px] flex items-center justify-center gap-2">
                 <div className="flex items-center justify-center cursor-pointer">
                   <Link href={`/dashboard/products/${product.id}`}>
                     <SquarePen className="w-4 h-4 text-yellow-500" />
                   </Link>
                 </div>
+                <DeleteProductDialog
+                  id={product.id}
+                  name={product.name}
+                  refetch={refetch}
+                />
               </TableCell>
             </TableRow>
           ))}
