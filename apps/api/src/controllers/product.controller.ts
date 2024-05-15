@@ -4,16 +4,33 @@ import { NextFunction, Request, Response } from "express";
 export class ProductController {
   async getMyProduct(req: Request, res: Response, next: NextFunction) {
     try {
+      const { page } = req.query;
+
+      let take = 5;
+      let skip;
+      if (page && !isNaN(Number(page))) {
+        skip = take * (Number(page) - 1);
+      }
+
       const products = await prisma.product.findMany({
         where: {
-          userId: req?.dataUser?.id
+          userId: req?.dataUser?.id,
+          name: { contains: String(req.query.search) },
         },
         orderBy: {
           createdAt: 'desc'
-        }
+        },
+        take: take,
+        skip: skip
       });
 
-      return res.status(200).json({ success: true, results: products });
+      const totalProduct = await prisma.product.count({
+        where: {
+          userId: req?.dataUser?.id,
+          name: { contains: String(req.query.search) },
+        },
+      });
+      return res.status(200).json({ success: true, results: {totalProduct, products} });
     } catch (error) {
       return next(error);
     }

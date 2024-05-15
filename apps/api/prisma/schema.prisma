@@ -19,6 +19,8 @@ model User {
   lastname    String?
   phone       String?
   companyName String?
+  norek       String?
+  bio         String?
   clients     Client[]
   products    Product[]
   invoices    Invoice[]
@@ -35,6 +37,7 @@ model Client {
   address           String?
   phone             String?
   paymentPreference String?
+  isDeleted         Boolean   @default(false)
   userId            Int
   user              User      @relation(fields: [userId], references: [id])
   invoices          Invoice[]
@@ -45,11 +48,12 @@ model Client {
 }
 
 model Product {
-  id             Int              @id @default(autoincrement())
-  name           String
-  description    String
-  price          Decimal
-  picture        String
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String
+  price       Decimal
+  picture     String
+  isDeleted   Boolean @default(false)
   userId         Int
   user           User             @relation(fields: [userId], references: [id])
   invoiceDetails InvoiceDetails[]
@@ -60,8 +64,8 @@ model Product {
 }
 
 model Invoice {
-  id                Int                @id @default(autoincrement())
-  invoiceNumber     String             @unique
+  id                String             @id @default(uuid())
+  invoiceNumber     String //INV_[tgl]_[idCLient]
   dueDate           DateTime
   status            InvoiceStatus      @default(PENDING)
   payment           String
@@ -80,7 +84,7 @@ model Invoice {
 
 model InvoiceDetails {
   id        Int      @id @default(autoincrement())
-  invoiceId Int
+  invoiceId String
   invoice   Invoice  @relation(fields: [invoiceId], references: [id])
   productId Int
   product   Product  @relation(fields: [productId], references: [id])
@@ -95,7 +99,7 @@ model InvoiceDetails {
 
 model RecurringInvoice {
   id               Int              @id @default(autoincrement())
-  invoiceId        Int
+  invoiceId        String
   invoice          Invoice          @relation(fields: [invoiceId], references: [id])
   paymentFrequency PaymentFrequency
   startDate        DateTime

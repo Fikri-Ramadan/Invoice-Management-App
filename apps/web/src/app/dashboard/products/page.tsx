@@ -5,9 +5,11 @@ import ProductTable from '@/components/dashboard/product/ProductTable';
 import { Button } from '@/components/ui/button';
 import { Box, CircleFadingPlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function DashboardProduct() {
   const router = useRouter();
+  const [total, setTotal] = useState(0);
 
   return (
     <div className="hidden w-full h-full flex-col space-y-2 p-8 md:flex">
@@ -18,7 +20,7 @@ export default function DashboardProduct() {
             Product List
           </h2>
           <p className="text-muted-foreground">
-            Here&apos;s a list of all your products !
+            You have {total}, Here&apos;s a list of all your products !
           </p>
           <div className="mt-4 w-full flex justify-between items-center">
             <Filter placeholder="Filter by name" />
@@ -32,7 +34,7 @@ export default function DashboardProduct() {
           </div>
         </div>
       </div>
-      <ProductTable />
+      <ProductTable setTotal={setTotal} />
     </div>
   );
 }

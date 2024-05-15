@@ -1,7 +1,7 @@
 'use client';
 
 import LoadingComp from '@/components/LoadingComp';
-import { Button } from '@/components/ui/button';
+import Pagination from '@/components/Pagination';
 import {
   Table,
   TableBody,
@@ -11,19 +11,24 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import useMyClients from '@/hooks/useMyClients';
-import { ChevronLeft, ChevronRight, SquarePen } from 'lucide-react';
+import { SquarePen } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function ClientTable() {
-  const { data, isLoading, isError } = useMyClients();
+export default function ClientTable({ setTotal }: { setTotal: any }) {
+  const searchParams = useSearchParams();
+  const { data, isLoading, isError } = useMyClients({
+    page: searchParams.get('page') || '1',
+    search: searchParams.get('search') || '',
+  });
 
   const [clients, setClients] = useState<any>([]);
 
   useEffect(() => {
     if (!isLoading) {
       setClients(() => {
-        return data?.results?.map((client: any) => {
+        return data?.results?.clients?.map((client: any) => {
           return {
             id: client?.id,
             name: client?.name,
@@ -34,6 +39,7 @@ export default function ClientTable() {
           };
         });
       });
+      setTotal(data?.results?.totalClient);
     }
   }, [isLoading, data]);
 
@@ -72,17 +78,10 @@ export default function ClientTable() {
           ))}
         </TableBody>
       </Table>
-      <div className="flex items-center">
-        <Button className="h-min w-min" variant={'ghost'}>
-          <ChevronLeft className="w-4 h-4" />
-        </Button>
-        <span className="w-8 h-8 border-2 border-slate-100 rounded-md flex items-center justify-center">
-          1
-        </span>
-        <Button className="h-min w-fit" variant={'ghost'}>
-          <ChevronRight className="w-4 h-4" />
-        </Button>
-      </div>
+      <Pagination
+        totalItem={data?.results?.totalClient || 0}
+        page={Number(searchParams.get('page')) || 1}
+      />
     </div>
   );
 }

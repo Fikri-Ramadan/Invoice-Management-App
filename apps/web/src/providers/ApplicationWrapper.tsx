@@ -17,7 +17,7 @@ export default function ApplicationWrapper({
         {/* sidebar */}
         <SideNavbar />
         {/* main page */}
-        <div className='pl-[160px] w-full'>{children}</div>
+        <div className='pl-[220px] w-full'>{children}</div>
       </div>
     );
   else if (pathname.includes(`/auth`))

@@ -71,7 +71,7 @@ const SideNavbar = (props: Props) => {
     });
 
   return (
-    <div className="fixed min-w-[80px] min-h-screen border-r px-3 pb-10 pt-8 flex flex-col justify-between">
+    <div className="fixed min-w-[80px] w-[216px] min-h-screen border-r px-3 pb-10 pt-8 flex flex-col justify-between">
       <div className="absolute right-[-20px] top-7">
         <Button
           onClick={toogleSidebar}
@@ -86,7 +86,7 @@ const SideNavbar = (props: Props) => {
           <LayoutDashboard />
         </div>
         {!isCollapsed && (
-          <Badge className="flex items-center justify-center w-full my-4">
+          <Badge className="flex items-center justify-center w-full my-4 h-8">
             Hello, {session?.email?.split('@')[0]}
           </Badge>
         )}

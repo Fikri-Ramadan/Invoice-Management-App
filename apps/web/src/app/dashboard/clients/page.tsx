@@ -5,9 +5,11 @@ import ClientTable from '@/components/dashboard/client/ClientTable';
 import { Button } from '@/components/ui/button';
 import { BookUser, CircleFadingPlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function DashboardClient() {
   const router = useRouter();
+  const [total, setTotal] = useState(0);
 
   return (
     <div className="hidden w-full h-full flex-col space-y-2 p-8 md:flex">
@@ -18,7 +20,7 @@ export default function DashboardClient() {
             Client List
           </h2>
           <p className="text-muted-foreground">
-            Here&apos;s a list of all your clients !
+            You have {total}, Here&apos;s a list of all your clients !
           </p>
           <div className="mt-4 w-full flex justify-between items-center">
             <Filter placeholder="Filter by name or email" />
@@ -32,7 +34,7 @@ export default function DashboardClient() {
           </div>
         </div>
       </div>
-      <ClientTable />
+      <ClientTable setTotal={setTotal} />
     </div>
   );
 }
