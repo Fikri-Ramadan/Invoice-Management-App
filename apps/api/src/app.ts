@@ -11,6 +11,7 @@ import { PORT } from './config';
 import { AuthRouter } from './routers/auth.router';
 import { ClientRouter } from './routers/client.router';
 import { ProductRouter } from './routers/product.router';
+import { ProfileRouter } from './routers/profile.router';
 
 export default class App {
   private app: Express;
@@ -55,6 +56,7 @@ export default class App {
     const authRouter = new AuthRouter();
     const clientRouter = new ClientRouter();
     const productRouter = new ProductRouter();
+    const profileRouter = new ProfileRouter();
 
     this.app.use(express.static('public'));
 
@@ -65,6 +67,7 @@ export default class App {
     this.app.use('/api/auth', authRouter.getRouter());
     this.app.use('/api/clients', clientRouter.getRouter());
     this.app.use('/api/products', productRouter.getRouter());
+    this.app.use('/api/profile', profileRouter.getRouter());
   }
 
   public start(): void {

@@ -21,6 +21,13 @@ export const verifyToken = async (
     }
     const verifiedToken: any = verify(token, process.env.SECRET_KEY as string);
 
+    if (!verifiedToken) {
+      return res.status(401).json({
+        success: false,
+        message: 'invalid token',
+      });
+    }
+
     req.dataUser = verifiedToken;
     next();
   } catch (error) {

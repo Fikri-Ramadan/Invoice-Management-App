@@ -45,3 +45,12 @@ export const imageSchema = Yup.mixed()
     if (!value) return true;
     return value.size <= 1024 * 1024;
   });
+
+export const validateProfile = Yup.object({
+  firstname: Yup.string(),
+  lastname: Yup.string(),
+  phone: Yup.string(),
+  norek: Yup.string(),
+  companyName: Yup.string(),
+  bio: Yup.string(),
+});

@@ -6,7 +6,6 @@ import { Input } from '../ui/input';
 import { useFormik } from 'formik';
 import { useToast } from '../ui/use-toast';
 import useSignUp from '@/hooks/useSignUp';
-import { useRef } from 'react';
 
 export default function SignUp() {
   const { toast } = useToast();
