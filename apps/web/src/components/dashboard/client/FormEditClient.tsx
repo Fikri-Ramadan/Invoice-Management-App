@@ -2,6 +2,13 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import useClientById from '@/hooks/useClientById';
 import useEditClient from '@/hooks/useEditClient';
@@ -9,13 +16,14 @@ import { validateAddClient } from '@/lib/validation';
 import { useFormik } from 'formik';
 import { Asterisk } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function FormEditClient({ id }: { id: string }) {
   const { data, isLoading, isError } = useClientById({ id });
   const { mutate, isPending } = useEditClient();
   const router = useRouter();
   const { toast } = useToast();
+  const [paymentPreference, setPaymentPreference] = useState('');
 
   const formik: any = useFormik({
     initialValues: {
@@ -26,7 +34,7 @@ export default function FormEditClient({ id }: { id: string }) {
       phone: '',
     },
     validationSchema: validateAddClient,
-    onSubmit: ({ name, email, paymentPreference, address, phone }) => {
+    onSubmit: ({ name, email, address, phone }) => {
       mutate(
         {
           id,
@@ -60,12 +68,9 @@ export default function FormEditClient({ id }: { id: string }) {
     if (!isLoading && data?.results) {
       formik.setFieldValue('name', data?.results?.name);
       formik.setFieldValue('email', data?.results?.email);
-      formik.setFieldValue(
-        'paymentPreference',
-        data?.results?.paymentPreference,
-      );
       formik.setFieldValue('address', data?.results?.address);
       formik.setFieldValue('phone', data?.results?.phone);
+      setPaymentPreference(data?.results?.paymentPreference)
     }
   }, [data, isLoading]);
 
@@ -112,12 +117,22 @@ export default function FormEditClient({ id }: { id: string }) {
             Additional Information
           </div>
           <div className="mb-2 font-semibold">Payment Preference</div>
-          <Input
-            name="paymentPreference"
-            type="text"
-            className="border-slate-300 w-1/2"
-            {...formik.getFieldProps('paymentPreference')}
-          />
+          <Select
+            onValueChange={(value) => {
+              setPaymentPreference(value)
+            }}
+            value={paymentPreference}
+            defaultValue={paymentPreference}
+          >
+            <SelectTrigger className="w-1/2">
+              <SelectValue placeholder="payment preference" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="cash">Cash</SelectItem>
+              <SelectItem value="debit">Debit</SelectItem>
+              <SelectItem value="transfer">Transfer</SelectItem>
+            </SelectContent>
+          </Select>
           {formik.touched.paymentPreference &&
           formik.errors.paymentPreference ? (
             <div className="text-xs text-red-500">

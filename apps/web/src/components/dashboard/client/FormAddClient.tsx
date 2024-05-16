@@ -2,6 +2,13 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import useAddClient from '@/hooks/useAddClient';
 import { validateAddClient } from '@/lib/validation';
@@ -87,17 +94,25 @@ export default function FormAddClient() {
           ) : null}
         </div>
 
-
         {/* payment preference */}
         <div>
-        <div className='mt-8 mb-4 text-xl font-semibold'>Additional Information</div>
+          <div className="mt-8 mb-4 text-xl font-semibold">
+            Additional Information
+          </div>
           <div className="mb-2 font-semibold">Payment Preference</div>
-          <Input
-            name="paymentPreference"
-            type="text"
-            className="border-slate-300 w-1/2"
-            {...formik.getFieldProps('paymentPreference')}
-          />
+          <Select
+          onValueChange={(value) => {
+            formik.setFieldValue('paymentPreference', value);
+          }}>
+            <SelectTrigger className="w-1/2">
+              <SelectValue placeholder="payment preference" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="cash">Cash</SelectItem>
+              <SelectItem value="debit">Debit</SelectItem>
+              <SelectItem value="transfer">Transfer</SelectItem>
+            </SelectContent>
+          </Select>
           {formik.touched.paymentPreference &&
           formik.errors.paymentPreference ? (
             <div className="text-xs text-red-500">
