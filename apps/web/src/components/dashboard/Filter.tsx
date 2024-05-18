@@ -17,7 +17,6 @@ export default function Filter({ placeholder }: { placeholder: string }) {
       <Input
         placeholder={placeholder}
         className="border-slate-500"
-        defaultValue={searchParams.get('search') || ''}
         value={search}
         onChange={(e) => {
           setSearch(e.target.value);

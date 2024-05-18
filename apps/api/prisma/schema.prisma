@@ -48,12 +48,12 @@ model Client {
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String
-  price       Decimal
-  picture     String
-  isDeleted   Boolean @default(false)
+  id             Int              @id @default(autoincrement())
+  name           String
+  description    String
+  price          Decimal
+  picture        String
+  isDeleted      Boolean          @default(false)
   userId         Int
   user           User             @relation(fields: [userId], references: [id])
   invoiceDetails InvoiceDetails[]
@@ -65,11 +65,12 @@ model Product {
 
 model Invoice {
   id                String             @id @default(uuid())
-  invoiceNumber     String //INV_[tgl]_[idCLient]
+  invoiceNumber     String 
   dueDate           DateTime
+  paidDate          DateTime?
   status            InvoiceStatus      @default(PENDING)
   payment           String
-  emailSent         DateTime
+  emailSent         DateTime?
   clientId          Int
   client            Client             @relation(fields: [clientId], references: [id])
   userId            Int

@@ -22,7 +22,6 @@ import useSession from '@/hooks/useSession';
 import { Badge } from './ui/badge';
 import { useRouter } from 'next/navigation';
 import LogoutDialog from './auth/LogoutDialog';
-// import LogoutDialog from './dashboard/LogoutDialog';
 
 type Props = {};
 const SideNavbar = (props: Props) => {
@@ -61,14 +60,6 @@ const SideNavbar = (props: Props) => {
       variant: 'ghost',
     },
   ];
-
-  if (session?.role == 'Super_Admin')
-    links.splice(1, 0, {
-      title: 'Users',
-      href: '/dashboard/users',
-      icon: UsersRound,
-      variant: 'ghost',
-    });
 
   return (
     <div className="fixed min-w-[80px] w-[216px] min-h-screen border-r px-3 pb-10 pt-8 flex flex-col justify-between">
