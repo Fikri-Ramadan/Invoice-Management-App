@@ -54,3 +54,7 @@ export const validateProfile = Yup.object({
   companyName: Yup.string(),
   bio: Yup.string(),
 });
+
+export const validateNewInvoice = Yup.object({
+  // clientId: Yup.string().required('Client is required')
+})

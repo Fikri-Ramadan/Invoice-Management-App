@@ -37,7 +37,7 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
             invoiceNumber: invoice?.invoiceNumber,
             clientName: invoice?.client?.name,
             status: invoice?.status,
-            dueDate: invoice?.dueDate,
+            createdAt: invoice?.createdAt,
             paidDate: invoice?.paidDate,
             payment: invoice?.payment,
             emailSent: invoice?.emailSent,
@@ -59,7 +59,7 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
             <TableHead className="">No INV</TableHead>
             <TableHead className="">client</TableHead>
             <TableHead className="">status</TableHead>
-            <TableHead className="">due date</TableHead>
+            <TableHead className="">created At</TableHead>
             <TableHead className="">paid date</TableHead>
             <TableHead className="">payment</TableHead>
             <TableHead className="">email sent</TableHead>
@@ -88,7 +88,7 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
                 </span>
               </TableCell>
               <TableCell className="">
-                {new Date(invoice?.dueDate).toLocaleString('en-US') || ''}
+                {new Date(invoice?.createdAt).toLocaleString('en-US') || ''}
               </TableCell>
               <TableCell className="">
                 {invoice?.paidDate ? (
@@ -101,7 +101,7 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
               </TableCell>
               <TableCell className="">{invoice.payment}</TableCell>
               <TableCell className="">
-                {invoice.emailSent ? 'true' : 'false'}
+                {invoice.emailSent ? new Date(invoice?.emailSent).toLocaleString('en-US') : 'false'}
               </TableCell>
               <TableCell className="flex items-center justify-center gap-2 h-[100px]">
                 {/* <div className="flex items-center justify-center cursor-pointer">
@@ -109,7 +109,6 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
                     <SquarePen className="w-4 h-4 text-yellow-500" />
                   </Link>
                 </div> */}
-                {/* <DeleteClientDialog id={client.id} name={client.name} refetch={refetch} /> */}
                 <SendEmailDialog invoiceId={invoice?.id} refetch={refetch} />
               </TableCell>
             </TableRow>

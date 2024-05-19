@@ -42,12 +42,12 @@ export class InvoiceController {
       const { clientId, dueDate, payment, productId, quantity, price, subTotal } = req.body;
 
       const isValidClient = await prisma.client.findUnique({
-        where: { id: clientId, userId: req?.dataUser?.id }
+        where: { id: Number(clientId), userId: req?.dataUser?.id }
       });
       if (!isValidClient) return res.status(400).json({ success: false, message: 'Invalid client' });
 
       const isValidProduct = await prisma.product.findUnique({
-        where: { id: productId, userId: req?.dataUser?.id }
+        where: { id: Number(productId), userId: req?.dataUser?.id }
       });
       if (!isValidProduct) return res.status(400).json({ success: false, message: 'Invalid product' });
 
@@ -61,7 +61,7 @@ export class InvoiceController {
           invoiceDetails: {
             create: {
               productId: Number(productId),
-              quantity, price, subTotal
+              quantity, price: Number(price), subTotal: Number(subTotal)
             }
           }
         }
@@ -112,8 +112,6 @@ export class InvoiceController {
         price: 'Rp. ' + isValidInvoice?.invoiceDetails[0]?.price,
         subTotal: 'Rp. ' + isValidInvoice?.invoiceDetails[0]?.subTotal
       };
-
-      console.log(data?.BASE_IMAGE_URL);
 
       const templateEmail = path.join(
         __dirname,

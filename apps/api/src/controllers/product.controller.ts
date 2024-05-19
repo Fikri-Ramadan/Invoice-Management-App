@@ -6,9 +6,10 @@ export class ProductController {
     try {
       const { page } = req.query;
 
-      let take = 5;
+      let take;
       let skip;
       if (page && !isNaN(Number(page))) {
+        take = 5;
         skip = take * (Number(page) - 1);
       }
 

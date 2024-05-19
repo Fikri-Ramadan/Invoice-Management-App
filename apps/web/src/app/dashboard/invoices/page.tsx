@@ -23,10 +23,10 @@ export default function DashboardInvoice() {
             You have {total}, Here&apos;s a list of all your invoices !
           </p>
           <div className="mt-4 w-full flex justify-between items-center">
-            <Filter placeholder="Filter by invoice number" />
+            <Filter placeholder="Filter by invoice number / client" />
             <Button
               className="flex gap-2 w-fit"
-              onClick={() => router.push('/dashboard/clients/create')}
+              onClick={() => router.push('/dashboard/invoices/create')}
             >
               <CircleFadingPlus className="w-4 h-4" />
               Create Invoice
