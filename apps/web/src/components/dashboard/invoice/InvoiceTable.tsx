@@ -12,26 +12,25 @@ import {
 } from '@/components/ui/table';
 import useMyInvoices from '@/hooks/useMyInvoices';
 import { cn } from '@/lib/utils';
-import { SquarePen } from 'lucide-react';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SendEmailDialog from './SendEmailDialog';
 
 export default function InvoiceTable({ setTotal }: { setTotal: any }) {
   const searchParams = useSearchParams();
-  const { data, isLoading, isError, refetch } = useMyInvoices();
-  // {
-  // page: searchParams.get('page') || '1',
-  // search: searchParams.get('search') || '',
-  // }
+  const { data, isLoading, isError, refetch } = useMyInvoices({
+    page: searchParams.get('page') || '1',
+    search: searchParams.get('search') || '',
+    date: searchParams.get('date') || '',
+    status: searchParams.get('status') || '',
+  });
 
   const [invoices, setInvoices] = useState<any>([]);
 
   useEffect(() => {
     if (!isLoading) {
       setInvoices(() => {
-        return data?.results?.map((invoice: any) => {
+        return data?.results?.invoices?.map((invoice: any) => {
           return {
             id: invoice?.id,
             invoiceNumber: invoice?.invoiceNumber,
@@ -44,7 +43,7 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
           };
         });
       });
-      setTotal(data?.results?.totalClient);
+      setTotal(data?.results?.totalInvoice);
     }
   }, [isLoading, data]);
 
@@ -76,7 +75,7 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
               <TableCell className="">
                 <span
                   className={cn(
-                    'rounded-md p-2 font-medium',
+                    'flex justify-center rounded-md p-2 font-medium',
                     invoice?.status == 'PENDING'
                       ? 'bg-yellow-200'
                       : invoice?.status == 'PAID'
@@ -90,7 +89,7 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
               <TableCell className="">
                 {new Date(invoice?.createdAt).toLocaleString('en-US') || ''}
               </TableCell>
-              <TableCell className="">
+              <TableCell className="w-[150px]">
                 {invoice?.paidDate ? (
                   new Date(invoice?.paidDate).toLocaleString('en-US')
                 ) : (
@@ -101,7 +100,9 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
               </TableCell>
               <TableCell className="">{invoice.payment}</TableCell>
               <TableCell className="">
-                {invoice.emailSent ? new Date(invoice?.emailSent).toLocaleString('en-US') : 'false'}
+                {invoice.emailSent
+                  ? new Date(invoice?.emailSent).toLocaleString('en-US')
+                  : 'false'}
               </TableCell>
               <TableCell className="flex items-center justify-center gap-2 h-[100px]">
                 {/* <div className="flex items-center justify-center cursor-pointer">

@@ -4,20 +4,70 @@ import path from 'path';
 import fs from 'fs';
 import Handlebars from "handlebars";
 import { EmailData, sendEmail } from "@/helpers/nodemailer";
+import { addOneDayToDate } from "@/helpers/utils";
 
 export class InvoiceController {
   async getMyInvoices(req: Request, res: Response, next: NextFunction) {
     try {
+      const { page } = req.query;
+
+      let take;
+      let skip;
+      if (page && !isNaN(Number(page))) {
+        take = 5;
+        skip = take * (Number(page) - 1);
+      }
+
+      let statusReq = {};
+      if (req.query.status) {
+        if (String(req.query.status).toUpperCase() == 'PENDING') statusReq = { equals: 'PENDING' };
+        else if (String(req.query.status).toUpperCase() == 'PAID') statusReq = { equals: 'PAID' };
+        else if (String(req.query.status).toUpperCase() == 'DUE_DATE') statusReq = { equals: 'DUE_DATE' };
+      }
+
+      let date;
+      let plusOneDay;
+      if (req.query.date) {
+        date = new Date(String(req.query.date));
+        plusOneDay = addOneDayToDate(new Date(String(req.query.date)));
+      }
+
+
       const invoices = await prisma.invoice.findMany({
         where: {
-          userId: req?.dataUser?.id
+          userId: req?.dataUser?.id,
+          status: statusReq,
+          OR: [
+            { invoiceNumber: { contains: String(req.query.search) } },
+            { client: { name: { contains: String(req.query.search) } } },
+          ],
+          createdAt: {
+            lte: plusOneDay,
+            gte: date
+          }
         },
         include: {
           client: true
-        }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        },
+        take: take,
+        skip: skip
       });
 
-      return res.status(200).json({ success: true, results: invoices });
+      const totalInvoice = await prisma.invoice.count({
+        where: {
+          userId: req?.dataUser?.id,
+          status: statusReq,
+          OR: [
+            { invoiceNumber: { contains: String(req.query.search) } },
+            { client: { name: { contains: String(req.query.search) } } },
+          ],
+        },
+      });
+
+      return res.status(200).json({ success: true, results: { totalInvoice, invoices } });
     } catch (error) {
       return next(error);
     }
