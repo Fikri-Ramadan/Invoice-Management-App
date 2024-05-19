@@ -13,6 +13,7 @@ import { ClientRouter } from './routers/client.router';
 import { ProductRouter } from './routers/product.router';
 import { ProfileRouter } from './routers/profile.router';
 import { InvoiceRouter } from './routers/invoice.router';
+import { InvoiceDetailRouter } from './routers/invoiceDetail.router';
 
 export default class App {
   private app: Express;
@@ -59,6 +60,7 @@ export default class App {
     const productRouter = new ProductRouter();
     const profileRouter = new ProfileRouter();
     const invoiceRouter = new InvoiceRouter();
+    const invoiceDetailRouter = new InvoiceDetailRouter();
 
     this.app.use(express.static('public'));
 
@@ -71,6 +73,7 @@ export default class App {
     this.app.use('/api/products', productRouter.getRouter());
     this.app.use('/api/profile', profileRouter.getRouter());
     this.app.use('/api/invoices', invoiceRouter.getRouter());
+    this.app.use('/api/invoice', invoiceDetailRouter.getRouter());
   }
 
   public start(): void {

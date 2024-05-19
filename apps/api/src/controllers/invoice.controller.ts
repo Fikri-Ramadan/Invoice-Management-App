@@ -64,6 +64,10 @@ export class InvoiceController {
             { invoiceNumber: { contains: String(req.query.search) } },
             { client: { name: { contains: String(req.query.search) } } },
           ],
+          createdAt: {
+            lte: plusOneDay,
+            gte: date
+          }
         },
       });
 
@@ -77,7 +81,10 @@ export class InvoiceController {
     try {
       const { id } = req.params;
       const invoice = await prisma.invoice.findUnique({
-        where: { id: id }
+        where: { id: id },
+        include: {
+          invoiceDetails: true
+        }
       });
       if (!invoice) return res.status(404).json({ success: false, message: 'Invoice not found' });
 
@@ -96,10 +103,10 @@ export class InvoiceController {
       });
       if (!isValidClient) return res.status(400).json({ success: false, message: 'Invalid client' });
 
-      const isValidProduct = await prisma.product.findUnique({
-        where: { id: Number(productId), userId: req?.dataUser?.id }
-      });
-      if (!isValidProduct) return res.status(400).json({ success: false, message: 'Invalid product' });
+      // const isValidProduct = await prisma.product.findUnique({
+      //   where: { id: Number(productId), userId: req?.dataUser?.id }
+      // });
+      // if (!isValidProduct) return res.status(400).json({ success: false, message: 'Invalid product' });
 
       const invoiceNumber = `INV_${Date.now()}_${clientId}`;
 
@@ -108,12 +115,12 @@ export class InvoiceController {
           clientId: Number(clientId),
           userId: req?.dataUser?.id,
           invoiceNumber, dueDate, payment,
-          invoiceDetails: {
-            create: {
-              productId: Number(productId),
-              quantity, price: Number(price), subTotal: Number(subTotal)
-            }
-          }
+          // invoiceDetails: {
+          //   create: {
+          //     productId: Number(productId),
+          //     quantity, price: Number(price), subTotal: Number(subTotal)
+          //   }
+          // }
         }
       });
 
@@ -132,7 +139,11 @@ export class InvoiceController {
           id: invoiceId,
           userId: req?.dataUser?.id
         },
-        include: { invoiceDetails: true }
+        include: {
+          invoiceDetails: {
+            include: { product: true }
+          }
+        }
       });
       if (!isValidInvoice) return res.status(400).json({ success: false, message: 'Invalid not found / invoice is not yours' });
 
@@ -143,6 +154,19 @@ export class InvoiceController {
       const product = await prisma.product.findUnique({ where: { id: isValidInvoice?.invoiceDetails[0]?.productId } });
 
       const profile = await prisma.user.findUnique({ where: { id: req?.dataUser?.id } });
+
+      const products = isValidInvoice?.invoiceDetails?.map((details) => {
+        return {
+          BASE_IMAGE_URL: process.env.BASE_IMAGE_URL + '/' + details?.product?.picture,
+          productName: details?.product?.name,
+          quantity: details?.quantity,
+          price: 'Rp. ' + details?.price,
+          subTotal: 'Rp. ' + details?.subTotal,
+          productDesc: details?.product?.description
+        };
+      });
+
+      const total = 'Rp. ' + isValidInvoice?.invoiceDetails?.reduce((acc, curr) => acc + curr?.subTotal, 0);
 
       const data = {
         companyName: profile?.companyName,
@@ -155,12 +179,8 @@ export class InvoiceController {
         DUE_DATE: new Date(isValidInvoice.dueDate).toLocaleString('en-US'),
         payment: isValidInvoice.payment,
         BASE_URL: process.env.BASE_URL,
-        BASE_IMAGE_URL: process.env.BASE_IMAGE_URL + '/' + product?.picture,
-        productName: product?.name,
-        quantity: isValidInvoice?.invoiceDetails[0]?.quantity,
-        productDesc: product?.description,
-        price: 'Rp. ' + isValidInvoice?.invoiceDetails[0]?.price,
-        subTotal: 'Rp. ' + isValidInvoice?.invoiceDetails[0]?.subTotal
+        products: products,
+        total: total,
       };
 
       const templateEmail = path.join(
@@ -189,6 +209,32 @@ export class InvoiceController {
       });
 
       return res.status(200).json({ success: true, message: 'Invoice sended to client email' });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async payInvoice(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { invoiceId } = req.body;
+
+      const isValidInvoice = await prisma.invoice.findUnique({
+        where: {
+          id: invoiceId,
+          userId: req?.dataUser?.id
+        },
+      });
+      if (!isValidInvoice) return res.status(400).json({ success: false, message: 'Invalid not found / invoice is not yours' });
+
+      await prisma.invoice.update({
+        where: { id: isValidInvoice?.id },
+        data: {
+          status: 'PAID',
+          paidDate: new Date()
+        }
+      });
+
+      return res.status(200).json({ success: true, message: 'Invoice successfully paid' });
     } catch (error) {
       return next(error);
     }

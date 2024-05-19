@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SendEmailDialog from './SendEmailDialog';
+import PayInvoiceDialog from './PayInvoiceDialog';
 
 export default function InvoiceTable({ setTotal }: { setTotal: any }) {
   const searchParams = useSearchParams();
@@ -111,6 +112,9 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
                   </Link>
                 </div> */}
                 <SendEmailDialog invoiceId={invoice?.id} refetch={refetch} />
+                {invoice?.status != 'PAID' && (
+                  <PayInvoiceDialog invoiceId={invoice?.id} refetch={refetch} />
+                )}
               </TableCell>
             </TableRow>
           ))}
