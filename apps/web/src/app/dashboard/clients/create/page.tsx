@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function CreateClientPage() {
   return (
-    <div className="hidden w-full max-w-7xl h-full flex-col space-y-2 p-8 md:flex">
+    <div className="hidden w-full max-w-7xl h-full flex-col space-y-8 p-8 md:flex">
       <Link href={'/dashboard/clients'}>
         <ArrowLeftToLine className="w-4 h-4 cursor-pointer" />
       </Link>

@@ -82,7 +82,10 @@ export class InvoiceController {
       const invoice = await prisma.invoice.findUnique({
         where: { id: id },
         include: {
-          invoiceDetails: true
+          invoiceDetails: {
+            include: { product: true }
+          },
+          client: true
         }
       });
       if (!invoice) return res.status(404).json({ success: false, message: 'Invoice not found' });

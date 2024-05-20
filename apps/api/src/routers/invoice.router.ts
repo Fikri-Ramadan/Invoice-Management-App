@@ -14,7 +14,7 @@ export class InvoiceRouter {
 
   private initializeRoutes() {
     this.router.get('/', verifyToken, this.invoiceController.getMyInvoices);
-    this.router.get('/:id', this.invoiceController.getInvoiceById);
+    this.router.get('/:id', verifyToken, this.invoiceController.getInvoiceById);
     this.router.post('/', verifyToken, this.invoiceController.createInvoice);
     this.router.post('/send', verifyToken, this.invoiceController.sendInvoice);
     this.router.post('/pay', verifyToken, this.invoiceController.payInvoice);

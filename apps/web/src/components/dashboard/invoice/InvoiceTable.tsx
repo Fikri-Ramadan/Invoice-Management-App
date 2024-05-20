@@ -16,6 +16,8 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SendEmailDialog from './SendEmailDialog';
 import PayInvoiceDialog from './PayInvoiceDialog';
+import Link from 'next/link';
+import { CircleAlert } from 'lucide-react';
 
 export default function InvoiceTable({ setTotal }: { setTotal: any }) {
   const searchParams = useSearchParams();
@@ -72,7 +74,7 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
               <TableCell className="font-medium">
                 {invoice.invoiceNumber}
               </TableCell>
-              <TableCell className="">{invoice.clientName}</TableCell>
+              <TableCell className="w-[100px]">{invoice.clientName}</TableCell>
               <TableCell className="">
                 <span
                   className={cn(
@@ -105,12 +107,12 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
                   ? new Date(invoice?.emailSent).toLocaleString('en-US')
                   : 'false'}
               </TableCell>
-              <TableCell className="flex items-center justify-center gap-2 h-[100px]">
-                {/* <div className="flex items-center justify-center cursor-pointer">
+              <TableCell className="flex items-center gap-2 h-[100px]">
+                <div className="flex items-center justify-center cursor-pointer">
                   <Link href={`/dashboard/invoices/${invoice.id}`}>
-                    <SquarePen className="w-4 h-4 text-yellow-500" />
+                    <CircleAlert className="w-4 h-4 text-blue-500" />
                   </Link>
-                </div> */}
+                </div>
                 <SendEmailDialog invoiceId={invoice?.id} refetch={refetch} />
                 {invoice?.status != 'PAID' && (
                   <PayInvoiceDialog invoiceId={invoice?.id} refetch={refetch} />
@@ -121,7 +123,7 @@ export default function InvoiceTable({ setTotal }: { setTotal: any }) {
         </TableBody>
       </Table>
       <Pagination
-        totalItem={data?.results?.totalClient || 0}
+        totalItem={data?.results?.totalInvoice || 0}
         page={Number(searchParams.get('page')) || 1}
       />
     </div>

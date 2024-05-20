@@ -16,7 +16,7 @@ export default function TotalPrice({ data }: { data: any }) {
   }, [priceData]);
 
   return (
-    <div className="w-1/2 space-y-4 mt-16">
+    <div className="w-full space-y-4 mt-16 mb-8">
       <div className="mb-2 text-xl font-semibold">Invoice Info</div>
       <div>
         {data.length > 0 &&

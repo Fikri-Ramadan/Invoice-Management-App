@@ -197,9 +197,11 @@ export default function FormAddInvoice({ clients, products }: Props) {
         <div>
           <TotalPrice data={data} />
         </div>
-        <Button disabled={isPending} type="submit">
-          Submit !
-        </Button>
+        <div className='w-full flex justify-end'>
+          <Button className="" disabled={isPending} type="submit">
+            Submit !
+          </Button>
+        </div>
       </div>
     </form>
   );
