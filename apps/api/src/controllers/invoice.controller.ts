@@ -32,7 +32,6 @@ export class InvoiceController {
         plusOneDay = addOneDayToDate(new Date(String(req.query.date)));
       }
 
-
       const invoices = await prisma.invoice.findMany({
         where: {
           userId: req?.dataUser?.id,
@@ -103,11 +102,6 @@ export class InvoiceController {
       });
       if (!isValidClient) return res.status(400).json({ success: false, message: 'Invalid client' });
 
-      // const isValidProduct = await prisma.product.findUnique({
-      //   where: { id: Number(productId), userId: req?.dataUser?.id }
-      // });
-      // if (!isValidProduct) return res.status(400).json({ success: false, message: 'Invalid product' });
-
       const invoiceNumber = `INV_${Date.now()}_${clientId}`;
 
       const invoice = await prisma.invoice.create({
@@ -115,12 +109,6 @@ export class InvoiceController {
           clientId: Number(clientId),
           userId: req?.dataUser?.id,
           invoiceNumber, dueDate, payment,
-          // invoiceDetails: {
-          //   create: {
-          //     productId: Number(productId),
-          //     quantity, price: Number(price), subTotal: Number(subTotal)
-          //   }
-          // }
         }
       });
 
@@ -150,8 +138,6 @@ export class InvoiceController {
       const client = await prisma.client.findUnique({
         where: { id: isValidInvoice?.clientId }
       });
-
-      const product = await prisma.product.findUnique({ where: { id: isValidInvoice?.invoiceDetails[0]?.productId } });
 
       const profile = await prisma.user.findUnique({ where: { id: req?.dataUser?.id } });
 

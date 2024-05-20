@@ -15,9 +15,11 @@ import { validateNewInvoice } from '@/lib/validation';
 import { useFormik } from 'formik';
 import { Asterisk, CalendarDays } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import MultiProductField from './MultiProductField';
+import TotalPrice from './TotalPrice';
+import { useState } from 'react';
 
 type Props = {
   clients: { id: string; name: string }[];
@@ -28,29 +30,24 @@ export default function FormAddInvoice({ clients, products }: Props) {
   const { mutate, isPending } = useAddInvoice();
   const router = useRouter();
   const { toast } = useToast();
-  const [productIds, setProductIds] = useState<any>([]);
-  const [quantities, setQuantities] = useState<any>({});
+  const [data, setData] = useState([
+    { id: '', name: '', quantity: 0, price: 0 },
+  ]);
 
   const formik: any = useFormik({
     initialValues: {
       clientId: '',
       dueDate: '',
-      productId: '',
-      price: 0,
-      quantity: 0,
       payment: '',
     },
     validationSchema: validateNewInvoice,
-    onSubmit: ({ clientId, dueDate, productId, price, quantity, payment }) => {
+    onSubmit: ({ clientId, dueDate, payment }) => {
       mutate(
         {
           clientId,
           dueDate,
-          productId,
-          price,
-          quantity,
           payment,
-          subTotal: price * quantity,
+          products: data,
         },
         {
           onSuccess: () => {
@@ -121,9 +118,9 @@ export default function FormAddInvoice({ clients, products }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* product */}
-          <div className="w-1/4">
+        {/* <div className="flex items-center gap-2"> */}
+        {/* product */}
+        {/* <div className="w-1/4">
             <div className="mb-2 font-semibold">Product</div>
             <Select
               onValueChange={(value) => {
@@ -153,9 +150,9 @@ export default function FormAddInvoice({ clients, products }: Props) {
                 {formik.errors.product}
               </div>
             ) : null}
-          </div>
-          {/* quantity */}
-          <div className="w-1/4">
+          </div> */}
+        {/* quantity */}
+        {/* <div className="w-1/4">
             <div className="mb-2 font-semibold">Quantity</div>
             <Input
               name="quantity"
@@ -168,12 +165,14 @@ export default function FormAddInvoice({ clients, products }: Props) {
                 {formik.errors.quantity}
               </div>
             ) : null}
-          </div>
-        </div>
+          </div> */}
+        {/* </div> */}
 
         {/* payment description */}
         <div>
-          <div className="mb-2 font-semibold">Payment Description</div>
+          <div className="mb-2 font-semibold flex items-center">
+            Payment Description <Asterisk className="text-red-500 w-4 h-4" />
+          </div>
           <Input
             name="payment"
             type="text"
@@ -183,6 +182,20 @@ export default function FormAddInvoice({ clients, products }: Props) {
           {formik.touched.payment && formik.errors.payment ? (
             <div className="text-xs text-red-500">{formik.errors.payment}</div>
           ) : null}
+        </div>
+
+        {/* multi product */}
+        <div>
+          <MultiProductField
+            products={products}
+            data={data}
+            setData={setData}
+          />
+        </div>
+
+        {/* Total price */}
+        <div>
+          <TotalPrice data={data} />
         </div>
         <Button disabled={isPending} type="submit">
           Submit !

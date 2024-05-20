@@ -33,7 +33,7 @@ export default function AddInvoicePage() {
   });
 
   return (
-    <div className="hidden w-full max-w-7xl h-full flex-col space-y-4 p-8 md:flex">
+    <div className="hidden w-full max-w-7xl h-full flex-col space-y-8 p-8 md:flex">
       <Link href={'/dashboard/invoices'}>
         <ArrowLeftToLine className="w-4 h-4 cursor-pointer" />
       </Link>
