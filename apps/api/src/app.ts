@@ -5,11 +5,17 @@ import express, {
   Request,
   Response,
   NextFunction,
-  Router,
 } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
-import { SampleRouter } from './routers/sample.router';
+import { AuthRouter } from './routers/auth.router';
+import { ClientRouter } from './routers/client.router';
+import { ProductRouter } from './routers/product.router';
+import { ProfileRouter } from './routers/profile.router';
+import { InvoiceRouter } from './routers/invoice.router';
+import { InvoiceDetailRouter } from './routers/invoiceDetail.router';
+import { schedule } from 'node-cron';
+import { dueDateChecker, recurringChecker } from './helpers/cronTask';
 
 export default class App {
   private app: Express;
@@ -51,13 +57,30 @@ export default class App {
   }
 
   private routes(): void {
-    const sampleRouter = new SampleRouter();
+    const authRouter = new AuthRouter();
+    const clientRouter = new ClientRouter();
+    const productRouter = new ProductRouter();
+    const profileRouter = new ProfileRouter();
+    const invoiceRouter = new InvoiceRouter();
+    const invoiceDetailRouter = new InvoiceDetailRouter();
+
+    this.app.use(express.static('public'));
 
     this.app.get('/', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student !`);
     });
 
-    this.app.use('/samples', sampleRouter.getRouter());
+    this.app.use('/api/auth', authRouter.getRouter());
+    this.app.use('/api/clients', clientRouter.getRouter());
+    this.app.use('/api/products', productRouter.getRouter());
+    this.app.use('/api/profile', profileRouter.getRouter());
+    this.app.use('/api/invoices', invoiceRouter.getRouter());
+    this.app.use('/api/invoice', invoiceDetailRouter.getRouter());
+
+    // Due Date Checker
+    schedule('30 * * * *', dueDateChecker);
+    // Recurring Checker
+    schedule('30 * * * *', recurringChecker);
   }
 
   public start(): void {
