@@ -1,3 +1,4 @@
+import { User } from '@prisma/client';
 import { Request, Response, NextFunction } from 'express';
 import { verify } from 'jsonwebtoken';
 
@@ -28,9 +29,10 @@ export const verifyToken = async (
       });
     }
 
-    req.dataUser = verifiedToken;
+    req.dataUser = verifiedToken as User;
     next();
   } catch (error) {
+    console.log(error)
     return res.status(400).send('Token error');
   }
 };

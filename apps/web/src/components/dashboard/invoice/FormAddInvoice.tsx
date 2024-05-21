@@ -39,15 +39,28 @@ export default function FormAddInvoice({ clients, products }: Props) {
       clientId: '',
       dueDate: '',
       payment: '',
+      recurringFrequency: '',
+      startDate: '',
+      endDate: '',
     },
     validationSchema: validateNewInvoice,
-    onSubmit: ({ clientId, dueDate, payment }) => {
+    onSubmit: ({
+      clientId,
+      dueDate,
+      payment,
+      recurringFrequency,
+      startDate,
+      endDate,
+    }) => {
       mutate(
         {
           clientId,
           dueDate,
           payment,
           products: data,
+          recurringFrequency,
+          startDate,
+          endDate,
         },
         {
           onSuccess: () => {
@@ -72,116 +85,141 @@ export default function FormAddInvoice({ clients, products }: Props) {
   return (
     <form onSubmit={formik.handleSubmit}>
       <div className="space-y-4">
-        {/* Client */}
-        <div>
-          <div className="mb-2 font-semibold">Client</div>
-          <Select
-            onValueChange={(value) => {
-              formik.setFieldValue('clientId', value);
-            }}
-          >
-            <SelectTrigger className="w-1/2 border-slate-300 border-2">
-              <SelectValue placeholder="Choose a Client" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[400px]">
-              {clients?.map((client: any, i: number) => {
-                return (
-                  <SelectItem key={i} value={`${client?.id}`}>
-                    {client?.name}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-          {formik.touched.clientId && formik.errors.clientId ? (
-            <div className="text-xs text-red-500">{formik.errors.clientId}</div>
-          ) : null}
-        </div>
-
-        {/* due date  */}
-        <div>
-          <div className="mb-2 font-semibold flex items-start">
-            Due Date <Asterisk className="text-red-500 w-4 h-4" />
-          </div>
-          <div className="flex items-center gap-2">
-            <DatePicker
-              showTimeSelect
-              timeInputLabel="Time:"
-              dateFormat={'yyyy/MM/dd h:mm aa'}
-              onChange={(date) => {
-                formik.setFieldValue('dueDate', date);
-              }}
-              selected={formik.getFieldProps('dueDate').value}
-              className="border-2 rounded-md border-slate-300 w-[200px] h-[40px]"
-            />
-            <CalendarDays className="opacity-50" />
-          </div>
-        </div>
-
-        {/* <div className="flex items-center gap-2"> */}
-        {/* product */}
-        {/* <div className="w-1/4">
-            <div className="mb-2 font-semibold">Product</div>
-            <Select
-              onValueChange={(value) => {
-                formik.setFieldValue('productId', value.split('-')[0]);
-                formik.setFieldValue('price', value.split('-')[1]);
-                setProductIds((prev: any) => [...prev, value.split('-')[0]]);
-              }}
-            >
-              <SelectTrigger className="w-full border-slate-300 border-2">
-                <SelectValue placeholder="Choose a Product" />
-              </SelectTrigger>
-              <SelectContent className="max-h-[400px]">
-                {products?.map((product: any, i: number) => {
-                  return (
-                    <SelectItem
-                      key={i}
-                      value={`${product?.id}-${product?.price}`}
-                    >
-                      {product?.name}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-            {formik.touched.product && formik.errors.product ? (
-              <div className="text-xs text-red-500">
-                {formik.errors.product}
+        <div className="flex gap-4">
+          <div className="w-1/2 space-y-4">
+            {/* Client */}
+            <div>
+              <div className="mb-2 font-semibold flex items-start">
+                Client <Asterisk className="text-red-500 w-4 h-4" />
               </div>
-            ) : null}
-          </div> */}
-        {/* quantity */}
-        {/* <div className="w-1/4">
-            <div className="mb-2 font-semibold">Quantity</div>
-            <Input
-              name="quantity"
-              type="number"
-              className="border-slate-500"
-              {...formik.getFieldProps('quantity')}
-            />
-            {formik.touched.quantity && formik.errors.quantity ? (
-              <div className="text-xs text-red-500">
-                {formik.errors.quantity}
-              </div>
-            ) : null}
-          </div> */}
-        {/* </div> */}
+              <Select
+                onValueChange={(value) => {
+                  formik.setFieldValue('clientId', value);
+                }}
+              >
+                <SelectTrigger className="w-1/2 border-slate-300 border-2">
+                  <SelectValue placeholder="Choose a Client" />
+                </SelectTrigger>
+                <SelectContent className="max-h-[400px]">
+                  {clients?.map((client: any, i: number) => {
+                    return (
+                      <SelectItem key={i} value={`${client?.id}`}>
+                        {client?.name}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+              {formik.touched.clientId && formik.errors.clientId ? (
+                <div className="text-xs text-red-500">
+                  {formik.errors.clientId}
+                </div>
+              ) : null}
+            </div>
 
-        {/* payment description */}
-        <div>
-          <div className="mb-2 font-semibold flex items-center">
-            Payment Description <Asterisk className="text-red-500 w-4 h-4" />
+            {/* due date  */}
+            <div>
+              <div className="mb-2 font-semibold flex items-start">
+                Due Date <Asterisk className="text-red-500 w-4 h-4" />
+              </div>
+              <div className="flex items-center gap-2">
+                <DatePicker
+                  showTimeSelect
+                  timeInputLabel="Time:"
+                  dateFormat={'yyyy/MM/dd h:mm aa'}
+                  onChange={(date) => {
+                    formik.setFieldValue('dueDate', date);
+                  }}
+                  selected={formik.getFieldProps('dueDate').value}
+                  className="border-2 rounded-md border-slate-300 w-[200px] h-[40px]"
+                />
+                <CalendarDays className="opacity-50" />
+              </div>
+              {formik.touched.dueDate && formik.errors.dueDate ? (
+                <div className="text-xs text-red-500">
+                  {formik.errors.dueDate}
+                </div>
+              ) : null}
+            </div>
+
+            {/* payment description */}
+            <div>
+              <div className="mb-2 font-semibold flex items-center">
+                Payment Description{' '}
+                <Asterisk className="text-red-500 w-4 h-4" />
+              </div>
+              <Input
+                name="payment"
+                type="text"
+                className="border-slate-500 w-full"
+                {...formik.getFieldProps('payment')}
+              />
+              {formik.touched.payment && formik.errors.payment ? (
+                <div className="text-xs text-red-500">
+                  {formik.errors.payment}
+                </div>
+              ) : null}
+            </div>
           </div>
-          <Input
-            name="payment"
-            type="text"
-            className="border-slate-500 w-1/2"
-            {...formik.getFieldProps('payment')}
-          />
-          {formik.touched.payment && formik.errors.payment ? (
-            <div className="text-xs text-red-500">{formik.errors.payment}</div>
-          ) : null}
+
+          {/* recurring sectio */}
+          <div className="w-1/2 space-y-4">
+            {/* recurring type */}
+            <div>
+              <div className="mb-2 font-semibold">Recurring Frequency</div>
+              <Select
+                onValueChange={(value) => {
+                  formik.setFieldValue('recurringFrequency', value);
+                }}
+              >
+                <SelectTrigger className="w-1/2 border-slate-300 border-2">
+                  <SelectValue placeholder="Choose a Frequency" />
+                </SelectTrigger>
+                <SelectContent className="max-h-[400px]">
+                  <SelectItem value={`DAILY`}>Daily</SelectItem>
+                  <SelectItem value={`WEEKLY`}>Weekly</SelectItem>
+                  <SelectItem value={`MONTHLY`}>Monthly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex gap-2">
+              {/* recurring start */}
+              <div>
+                <div className="mb-2 font-semibold">Recurring Start</div>
+                <div className="flex items-center gap-2">
+                  <DatePicker
+                    showTimeSelect
+                    timeInputLabel="Time:"
+                    dateFormat={'yyyy/MM/dd h:mm aa'}
+                    onChange={(date) => {
+                      formik.setFieldValue('startDate', date);
+                    }}
+                    selected={formik.getFieldProps('startDate').value}
+                    className="border-2 rounded-md border-slate-300 w-[200px] h-[40px]"
+                  />
+                  <CalendarDays className="opacity-50" />
+                </div>
+              </div>
+              {/* recurring end */}
+              <div>
+                <div className="mb-2 font-semibold">Recurring End</div>
+                <div className="flex items-center gap-2">
+                  <DatePicker
+                    showTimeSelect
+                    timeInputLabel="Time:"
+                    dateFormat={'yyyy/MM/dd h:mm aa'}
+                    onChange={(date) => {
+                      formik.setFieldValue('endDate', date);
+                    }}
+                    selected={formik.getFieldProps('endDate').value}
+                    className="border-2 rounded-md border-slate-300 w-[200px] h-[40px]"
+                  />
+                  <CalendarDays className="opacity-50" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* multi product */}
@@ -197,7 +235,7 @@ export default function FormAddInvoice({ clients, products }: Props) {
         <div>
           <TotalPrice data={data} />
         </div>
-        <div className='w-full flex justify-end'>
+        <div className="w-full flex justify-end">
           <Button className="" disabled={isPending} type="submit">
             Submit !
           </Button>

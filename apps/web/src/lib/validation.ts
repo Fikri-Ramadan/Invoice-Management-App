@@ -56,5 +56,7 @@ export const validateProfile = Yup.object({
 });
 
 export const validateNewInvoice = Yup.object({
-  // clientId: Yup.string().required('Client is required')
+  clientId: Yup.string().required('Client is required'),
+  dueDate: Yup.string().required('Due Date is required'),
+  payment: Yup.string().required('Payment is required')
 })

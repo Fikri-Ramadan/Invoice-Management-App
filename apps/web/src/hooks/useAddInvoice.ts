@@ -7,16 +7,22 @@ type Props = {
   dueDate: string;
   payment: string;
   products: { id: string; name: string; price: number; quantity: number; }[];
+  recurringFrequency?: string;
+  startDate?: string;
+  endDate?: string;
 };
 
 export default function useAddInvoice() {
   const { session } = useSession();
 
   const { mutate, isPending, isError } = useMutation({
-    mutationFn: async ({ clientId, dueDate, payment, products }: Props) => {
+    mutationFn: async ({ clientId, dueDate, payment, products, recurringFrequency, startDate, endDate }: Props) => {
       if (!session?.token) return null;
       const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_API_URL}/invoices`, {
-        clientId, dueDate, payment
+        clientId, dueDate, payment,
+        recurring: recurringFrequency ? true : false,
+        paymentFrequency: recurringFrequency,
+        startDate, endDate
       }, {
         headers: {
           Authorization: `Bearer ${session?.token}`

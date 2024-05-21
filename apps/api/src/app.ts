@@ -14,6 +14,8 @@ import { ProductRouter } from './routers/product.router';
 import { ProfileRouter } from './routers/profile.router';
 import { InvoiceRouter } from './routers/invoice.router';
 import { InvoiceDetailRouter } from './routers/invoiceDetail.router';
+import { schedule } from 'node-cron';
+import { dueDateChecker, recurringChecker } from './helpers/cronTask';
 
 export default class App {
   private app: Express;
@@ -74,6 +76,11 @@ export default class App {
     this.app.use('/api/profile', profileRouter.getRouter());
     this.app.use('/api/invoices', invoiceRouter.getRouter());
     this.app.use('/api/invoice', invoiceDetailRouter.getRouter());
+
+    // Due Date Checker
+    schedule('30 * * * *', dueDateChecker);
+    // Recurring Checker
+    schedule('30 * * * *', recurringChecker);
   }
 
   public start(): void {

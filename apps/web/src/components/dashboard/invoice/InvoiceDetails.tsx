@@ -18,6 +18,38 @@ export default function InvoiceDetails({ id }: { id: string }) {
   );
   return (
     <div className="space-y-8 tracking-widest">
+      {/* recurring info */}
+      {data?.results?.recurringInvoices?.length > 0 && (
+        <div className="flex flex-col items-start gap-2">
+          <div className="flex gap-2">
+            <div>Recurring :</div>
+            <div>{data?.results?.recurringInvoices[0]?.paymentFrequency}</div>
+          </div>
+          <div className="flex gap-2">
+            <div>Start Date :</div>
+            <div>
+              {new Date(
+                data?.results?.recurringInvoices[0]?.startDate,
+              ).toLocaleString('en-US')}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <div>End Date :</div>
+            {new Date(
+              data?.results?.recurringInvoices[0]?.endDate,
+            ).toLocaleString('en-US')}
+          </div>
+          <div className="flex gap-2">
+            <div>Last Created :</div>
+            <div>
+              {new Date(
+                data?.results?.recurringInvoices[0]?.lastCreated,
+              ).toLocaleString('en-US')}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* status */}
       <div
         className={cn(
@@ -61,10 +93,18 @@ export default function InvoiceDetails({ id }: { id: string }) {
           <div className="flex items-start gap-2">
             <div className="font-semibold text-xl">Client :</div>
             <div>
-              <div className="tracking-wider">{data?.results?.client?.name}</div>
-              <div className="tracking-wider">{data?.results?.client?.phone}</div>
-              <div className="tracking-wider">{data?.results?.client?.email}</div>
-              <div className="tracking-wider">{data?.results?.client?.address}</div>
+              <div className="tracking-wider">
+                {data?.results?.client?.name}
+              </div>
+              <div className="tracking-wider">
+                {data?.results?.client?.phone}
+              </div>
+              <div className="tracking-wider">
+                {data?.results?.client?.email}
+              </div>
+              <div className="tracking-wider">
+                {data?.results?.client?.address}
+              </div>
             </div>
           </div>
 

@@ -85,7 +85,8 @@ export class InvoiceController {
           invoiceDetails: {
             include: { product: true }
           },
-          client: true
+          client: true,
+          recurringInvoices: true
         }
       });
       if (!invoice) return res.status(404).json({ success: false, message: 'Invoice not found' });
@@ -98,7 +99,7 @@ export class InvoiceController {
 
   async createInvoice(req: Request, res: Response, next: NextFunction) {
     try {
-      const { clientId, dueDate, payment, productId, quantity, price, subTotal } = req.body;
+      const { clientId, dueDate, payment, recurring, paymentFrequency, startDate, endDate } = req.body;
 
       const isValidClient = await prisma.client.findUnique({
         where: { id: Number(clientId), userId: req?.dataUser?.id }
@@ -114,6 +115,17 @@ export class InvoiceController {
           invoiceNumber, dueDate, payment,
         }
       });
+
+      if (recurring && paymentFrequency && startDate && endDate) {
+        await prisma.recurringInvoice.create({
+          data: {
+            invoiceId: invoice?.id,
+            paymentFrequency,
+            startDate,
+            endDate
+          }
+        });
+      }
 
       return res.status(200).json({ success: true, results: invoice });
     } catch (error) {
