@@ -1,4 +1,5 @@
 import { ClientController } from "@/controllers/client.controller";
+import { newClientValidator } from "@/middlewares/validator";
 import { verifyToken } from "@/middlewares/verifyJwt";
 import { Router } from "express";
 
@@ -15,7 +16,7 @@ export class ClientRouter {
   private initializeRoutes() {
     this.router.get('/', verifyToken, this.clientController.getMyClient);
     this.router.get('/:id', verifyToken, this.clientController.getClientById);
-    this.router.post('/', verifyToken, this.clientController.createClient);
+    this.router.post('/', verifyToken, newClientValidator, this.clientController.createClient);
     this.router.put('/:id', verifyToken, this.clientController.updateClient);
     this.router.delete('/:id', verifyToken, this.clientController.softDeleteClient);
   }
