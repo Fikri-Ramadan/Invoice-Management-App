@@ -174,7 +174,7 @@ export class InvoiceController {
         companyEmail: profile?.email,
         clientName: client?.name,
         status: isValidInvoice?.status,
-        isPending: isValidInvoice?.status == 'PENDING',
+        isPending: isValidInvoice?.status == 'PENDING' || isValidInvoice?.status == 'DUE_DATE',
         isPaid: isValidInvoice?.status == 'PAID',
         PAID_DATE: new Date(isValidInvoice.paidDate || '').toLocaleString('en-US'),
         DUE_DATE: new Date(isValidInvoice.dueDate).toLocaleString('en-US'),

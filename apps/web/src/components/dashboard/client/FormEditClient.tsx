@@ -34,7 +34,7 @@ export default function FormEditClient({ id }: { id: string }) {
       phone: '',
     },
     validationSchema: validateAddClient,
-    onSubmit: ({ name, email, address, phone }) => {
+    onSubmit: ({ name, email, address, phone, paymentPreference }) => {
       mutate(
         {
           id,
@@ -70,7 +70,11 @@ export default function FormEditClient({ id }: { id: string }) {
       formik.setFieldValue('email', data?.results?.email);
       formik.setFieldValue('address', data?.results?.address);
       formik.setFieldValue('phone', data?.results?.phone);
-      setPaymentPreference(data?.results?.paymentPreference)
+      formik.setFieldValue(
+        'paymentPreference',
+        data?.results?.paymentPreference,
+      );
+      setPaymentPreference(data?.results?.paymentPreference);
     }
   }, [data, isLoading]);
 
@@ -117,22 +121,24 @@ export default function FormEditClient({ id }: { id: string }) {
             Additional Information
           </div>
           <div className="mb-2 font-semibold">Payment Preference</div>
-          <Select
-            onValueChange={(value) => {
-              setPaymentPreference(value)
-            }}
-            value={paymentPreference}
-            defaultValue={paymentPreference}
-          >
-            <SelectTrigger className="w-1/2">
-              <SelectValue placeholder="payment preference" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="cash">Cash</SelectItem>
-              <SelectItem value="debit">Debit</SelectItem>
-              <SelectItem value="transfer">Transfer</SelectItem>
-            </SelectContent>
-          </Select>
+          {paymentPreference && (
+            <Select
+              onValueChange={(value) => {
+                formik.setFieldValue('paymentPreference', value);
+              }}
+              value={formik.getFieldProps('paymentPreference').value}
+              defaultValue={formik.getFieldProps('paymentPreference').value}
+            >
+              <SelectTrigger className="w-1/2">
+                <SelectValue placeholder="payment preference" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="cash">Cash</SelectItem>
+                <SelectItem value="debit">Debit</SelectItem>
+                <SelectItem value="transfer">Transfer</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
           {formik.touched.paymentPreference &&
           formik.errors.paymentPreference ? (
             <div className="text-xs text-red-500">
